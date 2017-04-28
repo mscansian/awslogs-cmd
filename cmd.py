@@ -16,6 +16,9 @@ def main(args):
     print ("group {}".format(args.group))
     print ("stream {}".format(args.stream))
 
+    # HACK: Use a space before args to pass then to the function
+    args.args = list(map(str.lstrip, args.args))
+
     stdout_fd, stdout_filename = tempfile.mkstemp()
     with os.fdopen(stdout_fd, "w") as stdout:
         process = subprocess.Popen(args=[args.command]+args.args,
