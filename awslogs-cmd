@@ -5,4 +5,12 @@ SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
 
-$SCRIPTPATH/venv/bin/python3 $SCRIPTPATH/cmd.py "$@"
+# SIGUSR1 trap (forward signal)
+_usr1() {
+  kill -n 10 "$child" 2>/dev/null
+}
+trap _usr1 SIGUSR1
+
+$SCRIPTPATH/venv/bin/python3 $SCRIPTPATH/cmd.py "$@" &
+child=$!
+wait "$child"
