@@ -32,6 +32,10 @@ def main(args):
             # Forward SIGUSR1 to child process
             signal.signal(signal.SIGUSR1, forward_signal(process))
 
+        if args.sigterm:
+            # Forward SIGTERM to child process
+            signal.signal(signal.SIGTERM, forward_signal(process))
+
         try:
             run_process(process, logs, stdout_filename, stderr_filename,
                         through=args.stream_through)
@@ -102,6 +106,7 @@ if __name__ == "__main__":
     parser.add_argument("--literal", help="never lstrip args", action="store_true")
     parser.add_argument("--silent-exceptions", help="dont push exceptions to awslogs", action="store_true")
     parser.add_argument("--sigusr1", help="forward SIGUSR1 to child process", action="store_true")
+    parser.add_argument("--sigterm", help="forward SIGTERM to child process", action="store_true")
     parser.set_defaults(func=main)
     args = parser.parse_args()
     args.func(args)

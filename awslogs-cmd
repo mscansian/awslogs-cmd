@@ -11,6 +11,12 @@ _usr1() {
 }
 trap _usr1 SIGUSR1
 
+# SIGTERM trap (forward signal)
+_term() {
+  kill -TERM "$child" 2>/dev/null
+}
+trap _term SIGTERM
+
 $SCRIPTPATH/venv/bin/python3 $SCRIPTPATH/cmd.py "$@" &
 child=$!
 wait "$child"
