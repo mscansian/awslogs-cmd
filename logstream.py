@@ -12,6 +12,8 @@ import botocore
 
 
 CLOUDWATCH_LOGS_REGION = os.environ.get("CLOUDWATCH_LOGS_REGION", "us-east-1")
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -39,11 +41,13 @@ class CloudWatchLogsStream(BaseLogStream):
     MAX_BATCH_COUNT = 1000        # 1000 events
     PUSH_SIZE_THRESHOLD = 0.8     # 80%
     PUSH_COUNT_THRESHOLD = 0.99   # 99%
-    PUSH_TIME_THRESHOLD = 15000   # 15 seconds
+    PUSH_TIME_THRESHOLD = 30000   # 30 seconds
 
+    """ Alias for log() """
     def write(self, data):
         self.log(data)
 
+    """ Log message """
     def log(self, message, timestamp=None):
         if self._crossed_any_thresholds():
             self.push()
@@ -77,16 +81,16 @@ class CloudWatchLogsStream(BaseLogStream):
 
     def _crossed_time_threshold(self):
         try:
-            last_log_event = self._log_events[-1]
-            _, timestamp = last_log_event
+            oldest_log_event = self._log_events[0]
             expiration_time = self._current_time() - self.PUSH_TIME_THRESHOLD
-            if last_log_event["timestamp"] <= expiration_time:
+            if oldest_log_event["timestamp"] <= expiration_time:
                 logger.info("Forcing a PUSH. Reached time threshold.")
                 return True
         except IndexError:
             return False
         return False
 
+    """ Push logged messages to AWS Cloud Watch """
     def push(self):
         logger.info("Pushing logs to CloudWatch.")
         if not len(self._log_events):
@@ -94,6 +98,7 @@ class CloudWatchLogsStream(BaseLogStream):
             return
         self._awslogs_push(self.group_name, self.stream_name, self._log_events)
         self._clear_log_events()
+        logger.info("Push completed.")
 
     def _awslogs_push(self, group_name, stream_name, log_events):
         response = self._client.put_log_events(

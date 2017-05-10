@@ -17,6 +17,6 @@ _term() {
 }
 trap _term SIGTERM
 
-$SCRIPTPATH/venv/bin/python3 $SCRIPTPATH/cmd.py "$@" &
+$SCRIPTPATH/venv/bin/python3 $SCRIPTPATH/main.py "$@" &
 child=$!
 wait "$child"

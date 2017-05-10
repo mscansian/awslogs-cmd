@@ -26,6 +26,8 @@ def main(args):
 
     try:
         cmd_args = [args.command]+args.args
+        if args.unbuffer:
+            cmd_args.insert(0, "unbuffer")
         process, stdout_filename, stderr_filename = start_process(cmd_args)
 
         if args.sigusr1:
@@ -103,6 +105,7 @@ if __name__ == "__main__":
     parser.add_argument("-S", "-s", "--stream", help="awslogs stream name", default=str(uuid.uuid4()))
     parser.add_argument("-v", "--verbose", help="print group name and stream name", action="store_true")
     parser.add_argument("-t", "--stream-through", help="output stdout and stderr", action="store_true")
+    parser.add_argument("--unbuffer", help="use unbuffer", action="store_true")
     parser.add_argument("--return-code", help="print return code", action="store_true")
     parser.add_argument("--literal", help="never lstrip args", action="store_true")
     parser.add_argument("--silent-exceptions", help="dont push exceptions to awslogs", action="store_true")

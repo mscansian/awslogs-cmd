@@ -31,3 +31,9 @@ To disable this behaviour see option *--literal*.
 ## AWS Credentials ##
 AWS Credentials are handled by boto3.
 See https://boto3.readthedocs.io/en/latest/guide/configuration.html.
+
+## Unbuffer ##
+When running with the *--unbuffer* option set, it's necessary to have the
+unbuffer dependency installed. On Ubuntu this can be installed with:
+
+	$ sudo apt install expect
