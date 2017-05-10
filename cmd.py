@@ -54,6 +54,7 @@ def main(args):
         raise
     finally:
         logs.push()
+    sys.exit(process.returncode)
 
 # Start a process and return filenames for stdout and stderr
 def start_process(args):
